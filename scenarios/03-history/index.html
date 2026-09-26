@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>03. Історія навігації (H): перехоплення маршруту</title>
+  <link rel="stylesheet" href="../../shared/host.css">
+</head>
+<body>
+  <header class="host-header">
+    <a class="host-back" href="../../index.html">Усі сценарії</a>
+    <h1>03. Історія навігації (H): перехоплення маршруту</h1>
+    <p class="host-desc">Поточна локація λ — неподільний ресурс: у документі вона одна. Без захисту кошик з правилом «усе невідоме → <code>#/cart</code>» перехоплює навігацію каталогу (читання/запис). Домовленість про префікси прибирає перехоплення, але обидва модулі досі пишуть у λ, тож початковий маршрут залежить від порядку завантаження (запис/запис). Лише посередництво оболонки робить W<sub>H</sub>(A) = W<sub>H</sub>(B) = ∅.</p>
+    <div id="host-toolbar"></div>
+  </header>
+
+  <main class="host-layout">
+    <section class="host-slot" data-module="a">
+      <div class="host-slot-head"><h2>Модуль A · Каталог</h2><div class="host-slot-controls"></div></div>
+      <div id="root-a"></div>
+    </section>
+    <section class="host-slot" data-module="b">
+      <div class="host-slot-head"><h2>Модуль B · Кошик</h2><div class="host-slot-controls"></div></div>
+      <div id="root-b"></div>
+    </section>
+  </main>
+
+  <section class="host-panels">
+    <div><h3>Стан спільного ресурсу</h3><pre id="host-inspector"></pre></div>
+    <div><h3>Журнал</h3><ol id="host-log"></ol></div>
+  </section>
+
+  <p class="host-note">Спробуйте: 1) без захисту натисніть посилання в каталозі — навігацію перехоплює кошик; 2) на рівні «домовленість про префікси» порівняйте «A, потім B» і «B, потім A»: перехоплення немає, але стартова сторінка й постраждалий модуль залежать від порядку; 3) на рівні «посередництво оболонки» всі зміни λ проходять через оболонку (див. журнал), і результат від порядку не залежить. Аналог у cau-se: D2.</p>
+
+  <script>
+    window.__fixLevels = ["без захисту", "домовленість про префікси", "посередництво оболонки"];
+    // Оболонка m₀ — єдиний власник ресурсу H на рівні захисту 2.
+    // Модулі не пишуть у location, а надсилають запити navigate() і підписуються на зміни.
+    window.__shell = (function () {
+      const subs = new Set();
+      window.addEventListener("hashchange", () => subs.forEach((fn) => fn(location.hash)));
+      return {
+        navigate(path, requester) {
+          if (window.__host) window.__host.log("оболонка: навігація на " + path + " (запит модуля " + requester + ")");
+          location.hash = path;
+        },
+        subscribe(fn) { subs.add(fn); return () => subs.delete(fn); },
+      };
+    })();
+    // На рівні 2 початковий маршрут задає оболонка, а не модулі.
+    if (new URLSearchParams(location.search).get("fix") === "2" && !location.hash) {
+      history.replaceState(null, "", "#/catalog");
+    }
+    window.__inspector = () => ({
+      "location.hash": location.hash || "(порожньо)",
+      "history.length": history.length,
+    });
+  </script>
+  <script src="../../shared/host.js"></script>
+</body>
+</html>

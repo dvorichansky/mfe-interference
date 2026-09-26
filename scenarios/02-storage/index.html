@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>02. Сховище (S): читання/запис</title>
+  <link rel="stylesheet" href="../../shared/host.css">
+</head>
+<body>
+  <header class="host-header">
+    <a class="host-back" href="../../index.html">Усі сценарії</a>
+    <h1>02. Сховище (S): читання/запис</h1>
+    <p class="host-desc">Обидва модулі використовують ключ <code>localStorage["session"]</code>. Кошик, побачивши сесію «не свого формату», видаляє її і створює гостьову. Модуль A при цьому не змінювався, але користувача «розлогінено». Це прихована залежність: W(B) ∩ R(A) ≠ ∅.</p>
+    <div id="host-toolbar"></div>
+  </header>
+
+  <main class="host-layout">
+    <section class="host-slot" data-module="a">
+      <div class="host-slot-head"><h2>Модуль A · Особистий кабінет</h2><div class="host-slot-controls"></div></div>
+      <div id="root-a"></div>
+    </section>
+    <section class="host-slot" data-module="b">
+      <div class="host-slot-head"><h2>Модуль B · Кошик для гостей</h2><div class="host-slot-controls"></div></div>
+      <div id="root-b"></div>
+    </section>
+  </main>
+
+  <section class="host-panels">
+    <div><h3>Стан спільного ресурсу</h3><pre id="host-inspector"></pre></div>
+    <div><h3>Журнал</h3><ol id="host-log"></ol></div>
+  </section>
+
+  <p class="host-note">Спробуйте: в обох порядках страждає хтось один, але різний: при «A, потім B» розлогінено кабінет, при «B, потім A» зникає кошик. Кнопка «Перевірити» в кожному модулі перечитує стан.</p>
+
+  <script>
+    // Кожен запуск починається з чистого сховища (тільки ключі цього сценарію).
+    ["session", "mf:a:session", "mf:b:cart"].forEach((k) => localStorage.removeItem(k));
+    window.__fixLevels = ["без захисту", "префікси ключів mf:<модуль>:"];
+    window.__inspector = () => {
+      const out = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k === "session" || k.startsWith("mf:")) out["localStorage[\"" + k + "\"]"] = localStorage.getItem(k);
+      }
+      return Object.keys(out).length ? out : { "localStorage": "(порожньо)" };
+    };
+  </script>
+  <script src="../../shared/host.js"></script>
+</body>
+</html>

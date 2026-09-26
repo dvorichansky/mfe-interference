@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>05. Каскад стилів (CSS): динамічний відбиток</title>
+  <link rel="stylesheet" href="../../shared/host.css">
+</head>
+<body>
+  <header class="host-header">
+    <a class="host-back" href="../../index.html">Усі сценарії</a>
+    <h1>05. Каскад стилів (CSS): динамічний відбиток</h1>
+    <p class="host-desc">Модулі вставляють глобальні правила з однаковими селекторами (<code>.btn</code>, <code>.badge</code>) і однаковим токеном <code>--accent</code>. Однакова специфічність означає, що перемагає останнє вставлене правило. Відбиток запису CSS-правила залежить від поточного DOM: правило каталогу <code>.badge { display: none }</code> нічого не робить, доки кошик не створить власний елемент <code>.badge</code>.</p>
+    <div id="host-toolbar"></div>
+  </header>
+
+  <main class="host-layout">
+    <section class="host-slot" data-module="a">
+      <div class="host-slot-head"><h2>Модуль A · Каталог</h2><div class="host-slot-controls"></div></div>
+      <div id="root-a"></div>
+    </section>
+    <section class="host-slot" data-module="b">
+      <div class="host-slot-head"><h2>Модуль B · Кошик</h2><div class="host-slot-controls"></div></div>
+      <div id="root-b"></div>
+    </section>
+  </main>
+
+  <section class="host-panels">
+    <div><h3>Стан спільного ресурсу</h3><pre id="host-inspector"></pre></div>
+    <div><h3>Журнал</h3><ol id="host-log"></ol></div>
+  </section>
+
+  <p class="host-note">Типи конфліктів: кнопки <code>.btn</code> і токен <code>--accent</code> — запис/запис; бейдж <code>.badge</code> — читання/запис (кошик не задає display). Спробуйте: 1) порівняйте порядки «A, потім B» і «B, потім A» — чиї кнопки «правильні»; 2) у кошику натисніть «Застосувати промокод» і перевірте, чи видно бейдж знижки; 3) увімкніть «Shadow DOM»: селектори ізольовано, але колір кнопок досі спільний, бо кастомні властивості успадковуються крізь межу Shadow DOM; 4) лише «Shadow DOM + префікси токенів» розводить відбитки повністю. Аналог у cau-se: D1 (CSS token collision).</p>
+
+  <script>
+    window.__fixLevels = ["без захисту", "Shadow DOM", "Shadow DOM + префікси токенів"];
+    function q(id, sel) {
+      const root = document.getElementById("root-" + id);
+      return (root.shadowRoot || root).querySelector(sel);
+    }
+    window.__inspector = () => {
+      const bBtn = q("b", ".btn");
+      const bBadge = q("b", ".badge");
+      const rootB = document.getElementById("root-b");
+      return {
+        ":root --accent": getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "(немає)",
+        "кнопка B: фон / відступ": bBtn ? getComputedStyle(bBtn).backgroundColor + " / " + getComputedStyle(bBtn).paddingTop : "(немає)",
+        "бейдж B: display": bBadge ? getComputedStyle(bBadge).display : "(ще не створено)",
+        "елементів B, що збігаються з селекторами A": rootB.shadowRoot ? "0 (у Shadow DOM глобальні селектори не діють)" : rootB.querySelectorAll(".btn, .badge").length,
+      };
+    };
+  </script>
+  <script src="../../shared/host.js"></script>
+</body>
+</html>

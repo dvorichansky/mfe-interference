@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>01. Глобальна область (G): запис/запис</title>
+  <link rel="stylesheet" href="../../shared/host.css">
+</head>
+<body>
+  <header class="host-header">
+    <a class="host-back" href="../../index.html">Усі сценарії</a>
+    <h1>01. Глобальна область (G): запис/запис</h1>
+    <p class="host-desc">Обидва модулі зберігають конфігурацію в одній глобальній змінній <code>window.appConfig</code>. W(A) ∩ W(B) = { window.appConfig }. Перемагає той, хто записав останнім, а інший модуль мовчки читає чужі дані. Хто саме постраждає, визначає порядок завантаження.</p>
+    <div id="host-toolbar"></div>
+  </header>
+
+  <main class="host-layout">
+    <section class="host-slot" data-module="a">
+      <div class="host-slot-head"><h2>Модуль A · Каталог</h2><div class="host-slot-controls"></div></div>
+      <div id="root-a"></div>
+    </section>
+    <section class="host-slot" data-module="b">
+      <div class="host-slot-head"><h2>Модуль B · Кошик</h2><div class="host-slot-controls"></div></div>
+      <div id="root-b"></div>
+    </section>
+  </main>
+
+  <section class="host-panels">
+    <div><h3>Стан спільного ресурсу</h3><pre id="host-inspector"></pre></div>
+    <div><h3>Журнал</h3><ol id="host-log"></ol></div>
+  </section>
+
+  <p class="host-note">Спробуйте: порівняйте запуски «A, потім B» і «B, потім A» — постраждалий модуль змінюється. У режимі «Випадковий» результат залежить від імітованої затримки мережі (Твердження 1: для неінтерферентних модулів порядок не мав би значення). Аналог у Patel: FM-1, FM-4 (конкуренція за спільний реєстр).</p>
+
+  <script>
+    window.__fixLevels = ["без захисту", "простір імен window.__mf"];
+    window.__inspector = () => ({
+      "window.appConfig": window.appConfig === undefined ? "(немає)" : window.appConfig,
+      "window.__mf": window.__mf === undefined ? "(немає)" : window.__mf,
+    });
+  </script>
+  <script src="../../shared/host.js"></script>
+</body>
+</html>

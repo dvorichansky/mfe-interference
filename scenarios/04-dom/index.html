@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>04. DOM: конфлікт ідентифікаторів поза власним піддеревом</title>
+  <link rel="stylesheet" href="../../shared/host.css">
+</head>
+<body>
+  <header class="host-header">
+    <a class="host-back" href="../../index.html">Усі сценарії</a>
+    <h1>04. DOM: конфлікт ідентифікаторів поза власним піддеревом</h1>
+    <p class="host-desc">Обидва модулі показують модальне вікно, додаючи його в <code>document.body</code> з <code>id="modal"</code>, і далі шукають «своє» вікно глобально через <code>getElementById</code> / <code>querySelector</code>. Поки відкрите одне вікно, усе працює; конфлікт виникає лише тоді, коли відкриті обидва.</p>
+    <div id="host-toolbar"></div>
+  </header>
+
+  <main class="host-layout">
+    <section class="host-slot" data-module="a">
+      <div class="host-slot-head"><h2>Модуль A · Каталог</h2><div class="host-slot-controls"></div></div>
+      <div id="root-a"></div>
+    </section>
+    <section class="host-slot" data-module="b">
+      <div class="host-slot-head"><h2>Модуль B · Кошик</h2><div class="host-slot-controls"></div></div>
+      <div id="root-b"></div>
+    </section>
+  </main>
+
+  <section class="host-panels">
+    <div><h3>Стан спільного ресурсу</h3><pre id="host-inspector"></pre></div>
+    <div><h3>Журнал</h3><ol id="host-log"></ol></div>
+  </section>
+
+  <p class="host-note">Спробуйте: відкрийте вікно в каталозі, потім у кошику. Текст кошика потрапить у вікно каталогу, а кнопка «Закрити» в кошику закриє чуже вікно. Якщо відкривати в зворотному порядку, постраждає вже каталог.</p>
+
+  <style>
+    /* Позиціонування модальних вікон — частина сторінки демо, не модулів. */
+    [data-owner] { position: fixed; top: 90px; width: 300px; padding: 14px 16px; background: #fff;
+      border: 2px solid #1f5fa8; border-radius: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.18); z-index: 10; }
+    [data-owner="a"] { left: 28px; }
+    [data-owner="b"] { right: 28px; border-color: #8a4a00; border-style: dashed; }
+    [data-owner] .modal-body { min-height: 1.5em; margin-bottom: 10px; }
+  </style>
+  <script>
+    window.__fixLevels = ["без захисту", "посилання на власний елемент + префікс id"];
+    window.__inspector = () => {
+      const all = [...document.querySelectorAll("[data-owner]")];
+      return {
+        "елементів з id=\"modal\"": document.querySelectorAll("#modal").length,
+        "відкриті вікна (порядок у DOM)": all.map((el) => el.dataset.owner.toUpperCase() + " → \"" + el.querySelector(".modal-body").textContent + "\"").join("; ") || "(немає)",
+      };
+    };
+  </script>
+  <script src="../../shared/host.js"></script>
+</body>
+</html>

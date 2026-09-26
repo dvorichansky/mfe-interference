@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Інтерференція незалежно розгорнутих веб-модулів — демо</title>
+  <link rel="stylesheet" href="shared/host.css">
+  <style>
+    .idx { padding: 20px 28px 40px; max-width: 1100px; }
+    .idx h1 { font-size: 24px; margin: 0 0 6px; }
+    .idx > p { color: var(--host-muted); max-width: 80ch; margin: 0 0 18px; }
+    .idx table { border-collapse: collapse; width: 100%; font-size: 14px; }
+    .idx th, .idx td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--host-line); vertical-align: top; }
+    .idx th { color: var(--host-muted); font-weight: 600; }
+    .idx td a { color: var(--host-a); }
+    .idx td .host-chip { margin: 0 4px 4px 0; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main class="idx">
+    <h1>Інтерференція незалежно розгорнутих веб-модулів</h1>
+    <p>Шість мінімальних сценаріїв, по одному на кожен спільний ресурс середовища виконання.
+       У кожному два модулі, які окремо працюють коректно, конфліктують у спільній композиції.
+       На кожній сторінці можна змінити порядок завантаження, увімкнути захист, змонтувати або демонтувати модуль.</p>
+    <table>
+      <thead>
+        <tr><th>Сценарій</th><th>Ресурс</th><th>Тип конфлікту</th><th>Аналог у літературі</th><th>Запуск</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="scenarios/01-global/">01. Спільна конфігурація у window</a></td>
+          <td>G</td><td>запис/запис</td><td>Patel FM-1, FM-4</td>
+          <td><a class="host-chip" href="scenarios/01-global/?order=ab">A, потім B</a><a class="host-chip" href="scenarios/01-global/?order=ba">B, потім A</a><a class="host-chip" href="scenarios/01-global/?fix=1">із захистом</a></td>
+        </tr>
+        <tr>
+          <td><a href="scenarios/02-storage/">02. Сесія в localStorage</a></td>
+          <td>S</td><td>запис/запис + читання/запис</td><td>—</td>
+          <td><a class="host-chip" href="scenarios/02-storage/?order=ab">A, потім B</a><a class="host-chip" href="scenarios/02-storage/?order=ba">B, потім A</a><a class="host-chip" href="scenarios/02-storage/?fix=1">із захистом</a></td>
+        </tr>
+        <tr>
+          <td><a href="scenarios/03-history/">03. Перехоплення маршруту</a></td>
+          <td>H</td><td>читання/запис, запис/запис</td><td>cau-se D2</td>
+          <td><a class="host-chip" href="scenarios/03-history/">без захисту</a><a class="host-chip" href="scenarios/03-history/?fix=1&amp;order=ba">префікси, B→A</a><a class="host-chip" href="scenarios/03-history/?fix=2">оболонка</a></td>
+        </tr>
+        <tr>
+          <td><a href="scenarios/04-dom/">04. Модальні вікна з однаковим id</a></td>
+          <td>D</td><td>запис/запис (id), читання/запис (глобальний пошук)</td><td>—</td>
+          <td><a class="host-chip" href="scenarios/04-dom/">без захисту</a><a class="host-chip" href="scenarios/04-dom/?fix=1">із захистом</a></td>
+        </tr>
+        <tr>
+          <td><a href="scenarios/05-css/">05. Глобальні селектори й токени</a></td>
+          <td>C</td><td>запис/запис (.btn, --accent), читання/запис (.badge)</td><td>cau-se D1</td>
+          <td><a class="host-chip" href="scenarios/05-css/?order=ab">A, потім B</a><a class="host-chip" href="scenarios/05-css/?order=ba">B, потім A</a><a class="host-chip" href="scenarios/05-css/?fix=1">Shadow DOM</a><a class="host-chip" href="scenarios/05-css/?fix=2">Shadow DOM + токени</a></td>
+        </tr>
+        <tr>
+          <td><a href="scenarios/06-events/">06. Таймер і обробник після демонтажу</a></td>
+          <td>D, E</td><td>темпоральна інтерференція</td><td>Patel FM-5</td>
+          <td><a class="host-chip" href="scenarios/06-events/">без захисту</a><a class="host-chip" href="scenarios/06-events/?fix=1">із захистом</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

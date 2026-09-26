@@ -1,0 +1,74 @@
+/*
+ * Стилі хост-оболонки демо.
+ * Усі класи мають префікс host- і всі змінні — префікс --host-,
+ * щоб оболонка сама не ставала учасником інтерференції
+ * (особливо в сценарії 05, де модулі пишуть у глобальний каскад).
+ * Палітра розрахована на скриншоти для статті: читається і в градаціях сірого.
+ */
+:root {
+  --host-ink: #1d232b;
+  --host-muted: #5b6573;
+  --host-paper: #ffffff;
+  --host-panel: #f3f5f8;
+  --host-line: #cfd6df;
+  --host-a: #1f5fa8;      /* модуль A — синій, суцільна рамка */
+  --host-b: #8a4a00;      /* модуль B — бурштиновий, пунктирна рамка */
+  --host-err: #b3261e;
+  --host-ok: #1e6b34;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--host-ink);
+  background: var(--host-paper);
+}
+.host-header { padding: 20px 28px 12px; border-bottom: 1px solid var(--host-line); }
+.host-header a.host-back { color: var(--host-muted); text-decoration: none; font-size: 14px; }
+.host-header h1 { margin: 6px 0 4px; font-size: 22px; font-weight: 650; }
+.host-desc { margin: 0 0 10px; max-width: 78ch; color: var(--host-muted); }
+.host-desc code, .host-note code { background: var(--host-panel); padding: 0 4px; border-radius: 3px; }
+#host-toolbar { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; font-size: 14px; }
+.host-group { display: flex; gap: 6px; align-items: center; }
+.host-group > span { color: var(--host-muted); margin-right: 2px; }
+.host-chip {
+  display: inline-block; padding: 3px 10px; border: 1px solid var(--host-line);
+  border-radius: 999px; color: var(--host-ink); text-decoration: none; background: var(--host-paper);
+}
+.host-chip:hover { border-color: var(--host-ink); }
+.host-chip-active { background: var(--host-ink); color: var(--host-paper); border-color: var(--host-ink); }
+
+.host-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 18px 28px; }
+.host-slot { border: 2px solid var(--host-a); border-radius: 6px; padding: 12px 14px; min-height: 170px; }
+.host-slot[data-module="b"] { border-color: var(--host-b); border-style: dashed; }
+.host-slot-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.host-slot-head h2 { margin: 0; font-size: 16px; }
+.host-slot[data-module="a"] .host-slot-head h2 { color: var(--host-a); }
+.host-slot[data-module="b"] .host-slot-head h2 { color: var(--host-b); }
+.host-btn {
+  font: inherit; font-size: 13px; padding: 3px 10px; cursor: pointer;
+  border: 1px solid var(--host-line); border-radius: 4px; background: var(--host-panel); color: var(--host-ink);
+}
+.host-btn:focus-visible, .host-chip:focus-visible { outline: 2px solid var(--host-a); outline-offset: 2px; }
+
+.host-panels { display: grid; grid-template-columns: 1fr 1.4fr; gap: 18px; padding: 0 28px 28px; }
+.host-panels h3 { margin: 0 0 6px; font-size: 14px; color: var(--host-muted); font-weight: 600; }
+#host-inspector {
+  margin: 0; padding: 10px 12px; background: var(--host-panel); border-radius: 6px;
+  font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; min-height: 120px;
+}
+#host-log {
+  margin: 0; padding: 10px 12px 10px 12px; list-style: none; background: var(--host-panel); border-radius: 6px;
+  font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; max-height: 300px; overflow: auto;
+}
+#host-log li { padding: 1px 0; }
+.host-log-error { color: var(--host-err); font-weight: 600; }
+.host-log-error::before { content: "✗ "; }
+.host-log-ok { color: var(--host-ok); }
+.host-log-ok::before { content: "✓ "; }
+.host-log-host { color: var(--host-muted); }
+.host-note { padding: 0 28px 28px; max-width: 100ch; color: var(--host-muted); font-size: 14px; }
+
+@media (max-width: 800px) {
+  .host-layout, .host-panels { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>06. Події й таймери (E): темпоральне порушення володіння</title>
+  <link rel="stylesheet" href="../../shared/host.css">
+</head>
+<body>
+  <header class="host-header">
+    <a class="host-back" href="../../index.html">Усі сценарії</a>
+    <h1>06. Події й таймери (E): темпоральне порушення володіння</h1>
+    <p class="host-desc">Каталог під час монтування запускає таймер оновлення ціни і глобальний обробник клавіші «/». Під час демонтажу він лише очищує свою розмітку й «забуває» зупинити таймер і зняти обробник. Після демонтажу його ефекти тривають і влучають у кошик: таймер шукає <code>.price</code> глобально.</p>
+    <div id="host-toolbar"></div>
+  </header>
+
+  <main class="host-layout">
+    <section class="host-slot" data-module="a">
+      <div class="host-slot-head"><h2>Модуль A · Живі ціни</h2><div class="host-slot-controls"></div></div>
+      <div id="root-a"></div>
+    </section>
+    <section class="host-slot" data-module="b">
+      <div class="host-slot-head"><h2>Модуль B · Кошик</h2><div class="host-slot-controls"></div></div>
+      <div id="root-b"></div>
+    </section>
+  </main>
+
+  <section class="host-panels">
+    <div><h3>Стан спільного ресурсу</h3><pre id="host-inspector"></pre></div>
+    <div><h3>Журнал</h3><ol id="host-log"></ol></div>
+  </section>
+
+  <p class="host-note">Спробуйте: натисніть «Демонтувати» в модулі A і зачекайте кілька секунд — сума кошика почне змінюватися на ціну навушників. Натисніть «/» — спрацює обробник уже неіснуючого каталогу. Аналог у Patel: FM-5 (Lifecycle Ordering Fault).</p>
+
+  <script>
+    window.__fixLevels = ["без захисту", "контракт життєвого циклу (clearInterval + AbortController)"];
+    window.__demoStats = { zombieTicks: 0, zombieKeys: 0 }; // інструментування демо, не частина моделі
+    window.__inspector = () => ({
+      "сума в кошику (DOM)": (document.querySelector("#root-b .price") || {}).textContent || "(немає)",
+      "спрацювань таймера A після демонтажу": window.__demoStats.zombieTicks,
+      "спрацювань обробника «/» після демонтажу": window.__demoStats.zombieKeys,
+    });
+  </script>
+  <script src="../../shared/host.js"></script>
+</body>
+</html>
